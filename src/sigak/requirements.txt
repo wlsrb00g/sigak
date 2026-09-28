@@ -1,0 +1,44 @@
+# SIGAK PI Diagnostic Pipeline
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+
+# Database
+sqlalchemy==2.0.35
+asyncpg==0.29.0
+pgvector==0.3.5
+alembic==1.13.0
+
+# CV Pipeline
+mediapipe==0.10.18
+opencv-python-headless==4.10.0.84
+Pillow==10.4.0
+numpy==1.26.4
+scipy==1.14.0
+
+# CLIP
+torch==2.4.0
+open-clip-torch==2.26.1
+
+# InsightFace (primary face analysis)
+insightface==0.7.3
+onnxruntime==1.19.0
+
+# LLM
+anthropic==0.39.0
+
+# Auth (MVP v1.1: JWT)
+python-jose[cryptography]>=3.3.0
+
+# Report
+weasyprint==62.3
+jinja2==3.1.4
+
+# Utils
+pydantic==2.9.0
+pydantic-settings==2.5.0
+python-dotenv==1.0.1
+httpx==0.27.0
+boto3==1.35.0       # S3 for image storage
+redis==5.0.8        # Sia conversation session store (v2 Priority 1 D3, sliding TTL 5min)
