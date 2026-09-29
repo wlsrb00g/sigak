@@ -1,23 +1,41 @@
 # SIGAK
 
-얼굴 이미지에서 얻은 구조적 특징과 인터뷰에서 얻은 목표 이미지를 하나의 표현 체계로 연결하고, 현재-목표 차이를 바탕으로 추천을 구성하는 AI 개인 이미지 컨설팅 프로젝트입니다.
+**사용자의 현재 이미지와 원하는 이미지를 같은 기준으로 비교하고, 그 차이에 기반한 행동 방향을 제안하는 AI 이미지 컨설팅 프로젝트입니다.**
 
-## 시스템 설계 (선별한 코드 스냅샷 기준)
+## Problem
+
+얼굴 이미지에서 얻는 구조적 특징과 인터뷰에서 표현되는 목표 이미지는 형태가 다른 정보입니다. 두 입력을 비교 가능한 표현으로 연결하고, 일관된 추천으로 이어지도록 시스템의 판단 역할을 나눴습니다.
+
+## My Contribution
+
+### 1. Common Representation Design
+
+얼굴 분석으로 얻은 **Current State**와 인터뷰에서 해석한 **Target State**를 같은 표현 체계로 변환해 직접 비교할 수 있도록 구조를 설계했습니다.
+
+### 2. LLM × Deterministic Logic Separation
+
+- **LLM:** 비정형 인터뷰 해석과 결과 설명 생성
+- **Python / rules:** current-target gap 및 우선순위 계산, recommendation/action 선택
+
+추천 판단을 전부 LLM에 맡기지 않고, 계산과 설명의 역할을 분리했습니다.
+
+## How It Works
 
 ```text
-face image → landmark / structural features → current-state coordinates ┐
-interview → LLM interpretation → target-state coordinates              ├→ deterministic gap / priority / action selection
-                                                                       └→ LLM-generated explanation and report
+Face image → feature analysis → Current State ─┐
+                                                ├→ gap / priority → rule-based action
+Interview → LLM interpretation → Target State ┘                         ↓
+                                                               LLM explanation / report
 ```
 
-코드에는 InsightFace 기반 얼굴 분석, 좌표/갭 계산, 규칙 기반 action specification 및 별도 LLM 해석·리포트 생성 경로가 있습니다. 따라서 “LLM이 모든 추천을 자유 생성”하는 것으로 설명하지 않습니다. 서로 다른 파일/서비스 버전이 공존하므로 이 그림은 모든 버전이 단일 배포 파이프라인으로 통합·운영됐다는 증거가 아닙니다.
+## Implementation
 
-## 포함 파일과 실행
+선별한 코드 스냅샷에는 **InsightFace** 기반 얼굴 분석, 좌표와 gap 계산, 규칙 기반 action specification, LLM 해석·리포트 경로가 포함됩니다. FastAPI backend 모듈과 Next.js UI route 일부를 발췌한 저장소라 전체 앱의 단독 실행 패키지나 완전 통합 배포본은 아닙니다.
 
-`src/`에는 `Sigak-main.zip`에서 고른 backend pipeline/service 모듈과 upload/report UI route 일부만 발췌했습니다. 각 route는 대량의 미포함 frontend/backend 모듈에 의존하므로 이 저장소는 바로 실행 가능한 앱이 아닙니다. **실행 명령은 제공하지 않습니다.** API key나 유료 API 호출 없이 정적 소스만 검토했고, 서버를 재가동하거나 결제/API를 호출하지 않았습니다.
+## Service
 
-## 한계와 상태
+[SIGAK service page](https://www.sigak.asia/) — 서비스 backend는 현재 오프라인입니다. 개인정보가 포함된 실제 얼굴·인터뷰·리포트는 저장소에 포함하지 않았습니다.
 
-사용자 제공 현황상 서비스 서버는 비용 문제로 중단되어 있습니다. 실제 고객 report, 얼굴, 사용자 입력, demo data, 화면 캡처는 개인정보와 권한 문제로 포함하지 않았습니다. Antler KOR8 관련 수행 기간/성과 및 개인별 기여는 공개 가능한 별도 증빙을 확인하기 전까지 단정하지 않습니다. 코드만으로 저자/기여자를 확정할 수 없습니다.
+## Technical Notes
 
-이 선별 스냅샷은 `Desktop/Sigak-main.zip`에서 나온 것으로, 기존 `창업관련/SIGAK_DESIGNBOOK.jsx` 및 이전 `03_SIGAK_PORTFOLIO.zip`과 버전 일치 여부를 완전히 확인하지 못했습니다. repository 공개 전에 팀/회사 IP, 제3자 라이브러리 및 디자인의 재배포 권한을 확인해야 합니다. 라이선스는 추가하지 않았습니다.
+이 코드는 `Sigak-main.zip`에서 추린 portfolio source snapshot입니다. Antler Korea KOR8 프로젝트의 개인별 수행 범위와 코드 작성자 신원은 코드만으로 확정하지 않습니다. 서비스 개발 기간, 팀 성과 및 재배포 권한은 [`AUDIT_REPORT.md`](AUDIT_REPORT.md)를 참고하세요.
